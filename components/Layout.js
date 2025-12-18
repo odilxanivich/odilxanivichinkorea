@@ -201,31 +201,24 @@ export default function Layout({ children, title, description }) {
           </div>
 
           {/* Contact */}
-          <div>
-            <h2 className="font-bold text-lg mb-2">Contact</h2>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="hover:text-red-400">
-                  Odilxanivich Kim O'zi?
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-red-400">
-                  Yo'qotib qo'ymaslik
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-red-400">
-                  Ish bo'yicha
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-red-400">
-                  Reklama Menejmenti
-                </a>
-              </li>
-            </ul>
-          </div>
+<div>
+  <h2 className="font-bold text-lg mb-2">Contact</h2>
+  <ul className="space-y-2">
+    <li>
+      <a href="/contact/about" className="hover:text-red-400">Odilxanivich Kim O'zi?</a>
+    </li>
+    <li>
+      <a href="/contact/stay" className="hover:text-red-400">Yo'qotib qo'ymaslik</a>
+    </li>
+    <li>
+      <a href="/contact/work" className="hover:text-red-400">Ish bo'yicha</a>
+    </li>
+    <li>
+      <a href="/contact/ads" className="hover:text-red-400">Reklama Menejmenti</a>
+    </li>
+  </ul>
+</div>
+
         </div>
 
         <div className="text-center text-xs text-gray-400 py-6 border-t border-gray-700">
