@@ -100,7 +100,9 @@ export default function Layout({ children, title, description }) {
 
             <div className="flex items-center gap-5 mt-4 text-sm font-medium text-gray-300">
               <a
-                href="#"
+                href="https://www.instagram.com/odilxanivich_"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-red-400 transition-colors"
               >
                 <FaInstagram className="text-lg" />
@@ -108,7 +110,9 @@ export default function Layout({ children, title, description }) {
               </a>
 
               <a
-                href="#"
+                href="https://www.youtube.com/@odilxanivich"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-red-400 transition-colors"
               >
                 <FaYoutube className="text-lg" />
@@ -116,7 +120,9 @@ export default function Layout({ children, title, description }) {
               </a>
 
               <a
-                href="#"
+                href="https://invite.kakao.com/tc/INv4JC3UHM"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-red-400 transition-colors"
               >
                 <FaCommentDots className="text-lg" />
