@@ -5,7 +5,7 @@ category: "Housing-Uy"
 tags: ["Koreya", "Shaharlar", "Uy-joy", "O'zbek", "Hayot", "Moslashish"]
 excerpt: "Koreyada qayerda yashash qulay? Seulmi, Busanmi, Incheonmi? O‘z tajribamga tayangan holda do‘stona tarzda tushuntirib beraman."
 summary: "Koreyaga kelgan odam uchun eng katta savollardan biri — qaysi shaharda yashash qulay? Seulning shovqini, Busanning dengizi, Chuncheonning sokinligi… Har birining o‘ziga yarasha ruhi bor. Shu haqda do‘stona tarzda gaplashamiz."
-image: "/images/odilxanivich3.jpg"
+image: "/images/o3.avif"
 
 meta_title: "Koreyada Qayerda Yashash Qulay? — Do‘stona, Real Maslahatlar"
 meta_description: "Seul, Incheon, Busan, Daegu, Chuncheon, Jeju va boshqa mashhur Koreya shaharlarida yashash qanday? O‘zbekona ohangda, do‘stona maslahatlar."
@@ -16,11 +16,11 @@ language: "uz"
 
 og_title: "Koreyada Qayerda Yashash Qulay? — Do‘stona Maslahatlar"
 og_description: "Koreyaning mashhur shaharlarida yashash haqida o‘zbekona, samimiy tushuntirish."
-og_image: "/images/odilxanivich3.jpg"
+og_image: "/images/o3.avif"
 
 twitter_title: "Koreyada Qayerda Yashash Qulay?"
 twitter_description: "Seuldan Jejugacha — qaysi shahar qanday hayot beradi? Do‘stona maslahatlar."
-twitter_image: "/images/odilxanivich3.jpg"
+twitter_image: "/images/o3.avif"
 
 slug: "koreyada-qayerda-yashash-qulay"
 status: "published"
@@ -38,7 +38,7 @@ Hop, batafsil shaharlarni aytishdan oldin, bilishing kerak bo'lgan narsalar bor.
 
 ## **Seul — hamma yugurayotgan, hech kim to‘xtamayotgan markaz**
 <img 
-  src="/images/o5.jpg"
+  src="/images/o5.avif"
   alt="Koreya hayoti"
   style="
     width:60%;
@@ -67,7 +67,7 @@ Narxlar baland, odam ko‘p, tinchlik kam.
 
 ## **Incheon — Seulga yaqin, lekin nafas olish mumkin bo‘lgan joy**
 <img 
-  src="/images/o6.jpg"
+  src="/images/o6.avif"
   alt="Koreya hayoti"
   style="
     width:60%;
@@ -88,7 +88,7 @@ Agar Seulga yaqin bo‘lishni xohlasang, lekin Seulning shovqinidan qochmoqchi b
 
 ## **Busan — dengiz hidi bilan uyg‘onadigan shahar**
 <img 
-  src="/images/o7.jpg"
+  src="/images/o7.avif"
   alt="Koreya hayoti"
   style="
     width:60%;
@@ -109,7 +109,7 @@ Agar dengizni yaxshi ko‘rsang — Busan seni kutyapti.
 
 ## **Daegu — issiq shahar, issiq odamlar**
 <img 
-  src="/images/o10.jpg"
+  src="/images/o10.avif"
   alt="Koreya hayoti"
   style="
     width:60%;
@@ -135,7 +135,7 @@ mos keladi.
 
 ## **Chuncheon — sokinlik, tabiat, toza havo**
 <img 
-  src="/images/o11.jpg"
+  src="/images/o11.avif"
   alt="Koreya hayoti"
   style="
     width:60%;
@@ -161,7 +161,7 @@ Chuncheon — juda yoqimli tanlov.
 
 ## **Gwangju — san’at, madaniyat, yumshoq odamlar**
 <img 
-  src="/images/o9.jpg"
+  src="/images/o9.avif"
   alt="Koreya hayoti"
   style="
     width:60%;
@@ -179,7 +179,7 @@ Bu yerda odamlar juda muloyim, shahar esa keng va qulay.
 
 ## **Ulsan — sanoat, ish imkoniyatlari, katta zavodlar**
 <img 
-  src="/images/o8.jpg"
+  src="/images/o8.avif"
   alt="Koreya hayoti"
   style="
     width:60%;
@@ -197,7 +197,7 @@ Agar zavodlarda, texnik sohada ishlamoqchi bo‘lsang — imkoniyat ko‘p.
 
 ## **Jeju — orol hayoti, sokinlik, tabiat**
 <img 
-  src="/images/odilxanivich2.jpg"
+  src="/images/o2.avif"
   alt="Koreya hayoti"
   style="
     width:100%;
@@ -217,7 +217,7 @@ Baribir, agar orol hayotini xohlasang — Jeju o‘ziga tortadi.
 
 ## **Ansan — o‘zbeklar ko‘p, ish imkoniyatlari ko‘p**
 <img 
-  src="/images/odilxanivich2.jpg"
+  src="/images/o2.avif"
   alt="Koreya hayoti"
   style="
     width:100%;
@@ -235,7 +235,7 @@ Bu yerda o‘zbeklar ko‘p, ish topish osonroq, narxlar ham yengilroq.
 
 ## **Wonju — sokin, toza, talabalarga mos**
 <img 
-  src="/images/odilxanivich2.jpg"
+  src="/images/o2.avif"
   alt="Koreya hayoti"
   style="
     width:100%;
@@ -253,7 +253,7 @@ Talabalar ko‘p, narxlar past, tabiat chiroyli.
 
 ## **Sokcho — dengiz + tog‘ + sokin hayot**
 <img 
-  src="/images/odilxanivich2.jpg"
+  src="/images/o2.avif"
   alt="Koreya hayoti"
   style="
     width:100%;
@@ -271,7 +271,7 @@ Dengiz ham bor, Seoraksan tog‘i ham yaqin.
 
 ## **Gimpo — Seulga juda yaqin, narxlar esa pastroq**
 <img 
-  src="/images/odilxanivich2.jpg"
+  src="/images/o2.avif"
   alt="Koreya hayoti"
   style="
     width:100%;

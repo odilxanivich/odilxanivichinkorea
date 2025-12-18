@@ -5,7 +5,7 @@ category: "Real voqea"
 tags: ["Koreya", "Hayot", "Moslashish", "O'zbek", "Kuzatuvlar", "Kuchli va Zaif Tomonlar"]
 excerpt: "Koreyada yashash — bir tomondan sevgi, qulaylik va xavfsizlik; boshqa tomondan esa ichki bosim, ijtimoiy qoidalar va charchatadigan atmosfera. Bu — o‘zbekona, samimiy ko‘z bilan yozilgan real tajriba."
 summary: "Koreyada yashashni yaxshi ko‘raman: tili, ovqati, shahar ruhi, qulayliklari. Lekin shu bilan birga, ijtimoiy bosim, qoidalar, jimlik madaniyati va o‘zimni to‘liq ifoda qila olmaslik meni asta-sekin charchatadi. Bu post — shu ikki tomonning halol tasviri."
-image: "/images/odilxanivich4.jpg"
+image: "/images/o4.avif"
 
 meta_title: "Koreyada Yashash: Yorqin Tomonlar va Ichki Charchoq — Real O‘zbekona Hikoya"
 meta_description: "Koreyada yashashning yaxshi va qiyin tomonlari haqida samimiy, do‘stona, real o‘zbekona tajriba. Ijtimoiy bosim, qulayliklar, madaniyat farqlari va ichki charchoq haqida."
@@ -16,11 +16,11 @@ language: "uz"
 
 og_title: "Koreyada Yashashning Yorqin Tomonlari va Ichki Charchoq"
 og_description: "Koreyada yashashning ikki tomoni: sevgi va qulayliklar, hamda ichki bosim va charchoq. O‘zbekona, samimiy hikoya."
-og_image: "/images/odilxanivich4.jpg"
+og_image: "/images/o4.avif"
 
 twitter_title: "Koreyada Yashash: Real O‘zbekona Tajriba"
 twitter_description: "Koreyada yashashning yaxshi va qiyin tomonlari haqida samimiy hikoya."
-twitter_image: "/images/odilxanivich4.jpg"
+twitter_image: "/images/o4.avif"
 
 slug: "koreyada-yashashning-yorqin-va-qiyin-tomonlari"
 status: "published"

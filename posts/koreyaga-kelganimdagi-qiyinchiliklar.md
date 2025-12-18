@@ -5,7 +5,7 @@ category: "Real Voqea"
 tags: ["Koreya", "Hayot", "Motivatsiya", "O'zbek", "Immigratsiya", "Til o‘rganish"]
 excerpt: "Koreyaga kelganimda hammasi begona edi: ob-havo, odamlar, til… Ammo vaqt o‘tib, men o‘zimni qayta topdim va haqiqiy do‘stlarni uchratdim."
 summary: "Koreyaga kelganimda o‘zimni yo‘qotgan edim. Bir yarim yildan so‘ng esa o‘zimni qayta tiklab, haqiqiy do‘stlar, qo‘llovchilar va yangi hayot mazmunini topdim."
-image: "/images/odilxanivich1.jpg"
+image: "/images/o1.avif"
 meta_title: "Koreyaga Kelganimdagi Qiyinchiliklar — Haqiqiy Motivatsion Hikoya"
 meta_description: "Koreyaga kelganimdagi qiyinchiliklar, til bilmaslik, moslashish jarayoni va bir yarim yildan keyin topgan kuchim haqida motivatsion hikoya."
 keywords: "Koreya hayoti, O'zbek Koreyada, real voqea, moslashish, motivatsiya, immigratsiya, til o‘rganish, Koreya tajriba"
@@ -14,7 +14,7 @@ language: "uz"
 
 og_title: "Janubiy Koreyaga Kelganimdagi Qiyinchiliklar va O‘zimni Qayta Topganim"
 og_description: "Koreyaga kelganimda duch kelgan qiyinchiliklar va o‘zimni qayta topganim haqidagi motivatsion hikoya."
-og_image: "/images/odilxanivich1.jpg"
+og_image: "/images/o1.avif"
 twitter_title: "Koreyaga Kelganimdagi Qiyinchiliklar — Haqiqiy Hikoya"
 twitter_description: "Til bilmaslik, moslasha olmaslik va keyinchalik topilgan kuch haqida motivatsion hikoya."
 twitter_image: "/images/odilxanivich1.jpg"
@@ -94,7 +94,7 @@ Endi orqaga qarasam, o‘sha og‘ir kunlar uchun ham minnatdorman.
 
 ---
 <img 
-  src="/images/odilxanivich1.jpg"
+  src="/images/o1.avif"
   alt="Koreya hayoti"
   style="
     width:100%;
