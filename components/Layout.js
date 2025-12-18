@@ -211,9 +211,6 @@ export default function Layout({ children, title, description }) {
       <a href="/contact/stay" className="hover:text-red-400">Yo'qotib qo'ymaslik</a>
     </li>
     <li>
-      <a href="/contact/work" className="hover:text-red-400">Ish bo'yicha</a>
-    </li>
-    <li>
       <a href="/contact/ads" className="hover:text-red-400">Reklama Menejmenti</a>
     </li>
   </ul>

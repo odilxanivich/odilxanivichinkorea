@@ -4,19 +4,15 @@ import Link from "next/link";
 const modalContent = {
   about: {
     title: "Odilxanivich Kim O'zi?",
-    text: "Odilxanivich — Koreyada yashab, o‘zbek auditoriyasiga foydali ma’lumotlar, tajribalar va kuzatuvlar ulashadigan blogger.",
+    text: "Odilxanivich — bu blogning egasi. Men Koreyada yashayman va shu yerda ko‘rgan‑bilganlarimni, boshimdan o‘tgan voqealarni, foydali tajribalarimni o‘zbek tilida bo‘lishib boraman. Blogda faqat shaxsiy hayotim emas, balki Koreyadagi kundalik hayot, madaniyat, jamiyat, ish imkoniyatlari va real muammolar haqida ham gaplashaman.",
   },
   stay: {
     title: "Yo'qotib qo'ymaslik",
-    text: "Blogni kuzatib borish uchun Telegram, email obuna yoki bookmark qo‘shish kabi usullar haqida ma’lumot.",
-  },
-  work: {
-    title: "Ish bo'yicha",
-    text: "Koreyada ish topish, rezume tayyorlash, intervyu savollari va viza jarayonlari bo‘yicha real tajribalar.",
+    text: "Agar siz blogni topgan bo'lsangiz — yo'qotmang! Odilxanivich har hafta yangi postlar, foydali maslahatlar va Koreyada yashash bo'yicha tajribalar bilan bo'lishadi. Siz blogni bookmarksga qo'shishingiz, Telegram kanalga obuna bo'lishingiz yoki email orqali yangiliklarni olishni yoqishingiz mumkin.",
   },
   ads: {
     title: "Reklama Menejmenti",
-    text: "Blogda reklama joylashtirish, hamkorlik qilish yoki tijorat takliflari bo‘yicha to‘liq ma’lumot.",
+    text: "Agar siz o'z brendingizni yoki mahsulotingizni Odilxanivich blogida reklama qilishni istasangiz, bu bo'lim orqali bog'lanishingiz mumkin. Reklama joylashtirish, hamkorlik qilish, sponsorlik takliflari va boshqa tijorat aloqalari uchun bu yerda to'liq ma'lumot beriladi. Blog o'zbek auditoriyasiga yo'naltirilgan bo'lib, sizning xabaringizni to'g'ri odamlar ko'radi.",
   },
 };
 
