@@ -124,7 +124,7 @@ export default function Home({ posts }) {
       </div>
 
       {/* LOCATION SECTION */}
-      <Link href="/posts/wheretolive">
+      <Link href="/posts/koreyada-qayerda-yashash-qulay">
         <section className="w-full mt-20 px-4 md:px-10 cursor-pointer">
           <div className="text-center space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
