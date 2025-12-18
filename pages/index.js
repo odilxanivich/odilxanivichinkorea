@@ -140,22 +140,22 @@ export default function Home({ posts }) {
               {
                 name: "Seoul",
                 desc: "Qimmat, Ish Topish Oson",
-                img: "/images/seoul.jpg",
+                img: "/images/seoul.avif",
               },
               {
                 name: "Busan",
                 desc: "Sohil Bo'yidagi Rohat, Arzon",
-                img: "/images/busan.jpg",
+                img: "/images/busan.avif",
               },
               {
                 name: "Chuncheon",
                 desc: "Kurort Shahar, Faqat O'qish Uchun",
-                img: "/images/chuncheon.jpg",
+                img: "/images/chuncheon.avif",
               },
               {
                 name: "Incheon",
                 desc: "Aeroport va Dengiz Vaybi, Zamonaviy",
-                img: "/images/incheon.jpg",
+                img: "/images/incheon.avif",
               },
             ].map((city) => (
               <div key={city.name} className="flex flex-col">
