@@ -19,19 +19,22 @@ jobs:
           echo "FILE=$FILE" >> $GITHUB_ENV
 
       - name: Extract title and description from front-matter
-        run: |
-          TITLE=$(sed -n 's/^title:[[:space:]]*"\(.*\)"/\1/p' "$FILE" | head -n 1)
-          EXCERPT=$(sed -n 's/^excerpt:[[:space:]]*"\(.*\)"/\1/p' "$FILE" | head -n 1)
-          SUMMARY=$(sed -n 's/^summary:[[:space:]]*"\(.*\)"/\1/p' "$FILE" | head -n 1)
+  run: |
+    FRONTMATTER=$(awk 'NR==1{f=1} /^---$/{if(++c==2) exit} f' "$FILE")
 
-          if [ -n "$EXCERPT" ]; then
-            DESC="$EXCERPT"
-          else
-            DESC="$SUMMARY"
-          fi
+    TITLE=$(echo "$FRONTMATTER" | sed -n 's/^title:[[:space:]]*"\(.*\)"/\1/p')
+    EXCERPT=$(echo "$FRONTMATTER" | sed -n 's/^excerpt:[[:space:]]*"\(.*\)"/\1/p')
+    SUMMARY=$(echo "$FRONTMATTER" | sed -n 's/^summary:[[:space:]]*"\(.*\)"/\1/p')
 
-          echo "TITLE=$TITLE" >> $GITHUB_ENV
-          echo "DESC=$DESC" >> $GITHUB_ENV
+    if [ -n "$EXCERPT" ]; then
+      DESC="$EXCERPT"
+    else
+      DESC="$SUMMARY"
+    fi
+
+    echo "TITLE=$TITLE" >> $GITHUB_ENV
+    echo "DESC=$DESC" >> $GITHUB_ENV
+
 
       - name: Send Telegram message
         env:
@@ -44,3 +47,4 @@ jobs:
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode="HTML" \
             --data-urlencode "text=$MESSAGE"
+            
