@@ -1,37 +1,15 @@
-name: Send Markdown Title and Summary to Telegram
+name: Test Telegram Bot
 
 on:
-  push:
-    paths:
-      - "*.md"
+  workflow_dispatch:   # allows you to run manually from GitHub Actions tab
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Get latest Markdown file
-        id: mdfile
-        run: |
-          FILE=$(git diff --name-only HEAD~1 HEAD | grep '.md$' | head -n 1)
-          echo "file=$FILE" >> $GITHUB_OUTPUT
-
-      - name: Extract title and summary from front matter
-        id: extract
-        run: |
-          TITLE=$(grep '^title:' ${{ steps.mdfile.outputs.file }} | sed 's/title:[[:space:]]*//;s/"//g')
-          SUMMARY=$(grep '^summary:' ${{ steps.mdfile.outputs.file }} | sed 's/summary:[[:space:]]*//;s/"//g')
-          echo "title=$TITLE" >> $GITHUB_OUTPUT
-          echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
-
-      - name: Send to Telegram
+      - name: Send test message
         uses: appleboy/telegram-action@v0.1.0
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message: |
-            *${{ steps.extract.outputs.title }}*
-            _${{ steps.extract.outputs.summary }}_
-          parse_mode: markdown
+          message: "Hello from GitHub Actions 👋"
