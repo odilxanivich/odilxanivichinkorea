@@ -25,7 +25,7 @@ jobs:
             exit 0
           fi
 
-      - name: Parse front-matter with yq
+      - name: Parse front-matter
         run: |
           TITLE=$(yq e '.title' "$FILE")
           EXCERPT=$(yq e '.excerpt' "$FILE")
@@ -35,6 +35,12 @@ jobs:
           DESC=${DESC:-"Yangi maqola qo‘shildi"}
           echo "TITLE=$TITLE" >> $GITHUB_ENV
           echo "DESC=$DESC" >> $GITHUB_ENV
+
+      - name: Debug
+        run: |
+          echo "FILE=${{ env.FILE }}"
+          echo "TITLE=${{ env.TITLE }}"
+          echo "DESC=${{ env.DESC }}"
 
       - name: Send Telegram message
         env:
