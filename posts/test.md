@@ -8,4 +8,4 @@ summary: "Talaba bo‘lib Koreyada o‘qiyapsanmi? 2026-yilda yaqin mamlakatlarg
 image: "/images/travel-asia.avif"
 ---
 
-Plz work This is a a test post.gfgfcfcfg
+Plz work This is a a test post.gfgfcfcfgds

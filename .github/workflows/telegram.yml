@@ -1,12 +1,36 @@
-name: TEST SECRETS ONLY
-on: [push]
+name: Send Markdown Title and Summary to Telegram
+
+on:
+  push:
+    paths:
+      - "*.md"
+
 jobs:
-  test:
+  notify:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "TOKEN starts with: ${{ secrets.TELEGRAM_BOT_TOKEN != '' && 'OK' || 'MISSING' }}"
-          echo "CHATID starts with: ${{ secrets.TELEGRAM_CHAT_ID != '' && 'OK' || 'MISSING' }}"
-          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d text="🧪 SECRETS TEST $(date)"
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get latest Markdown file
+        id: mdfile
+        run: |
+          FILE=$(git diff --name-only HEAD~1 HEAD | grep '.md$' | head -n 1)
+          echo "file=$FILE" >> $GITHUB_OUTPUT
+
+      - name: Extract title and summary
+        id: extract
+        run: |
+          TITLE=$(head -n 1 ${{ steps.mdfile.outputs.file }})
+          SUMMARY=$(head -n 5 ${{ steps.mdfile.outputs.file }} | tail -n +2)
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+          echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
+
+      - name: Send to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            *${{ steps.extract.outputs.title }}*
+            _${{ steps.extract.outputs.summary }}_
