@@ -18,19 +18,19 @@ jobs:
           FILE=$(git diff --name-only HEAD~1 HEAD | grep '.md$' | head -n 1)
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
-      - name: Extract title and summary
+      - name: Extract title and summary from front matter
         id: extract
         run: |
-          TITLE=$(head -n 1 ${{ steps.mdfile.outputs.file }})
-          SUMMARY=$(head -n 5 ${{ steps.mdfile.outputs.file }} | tail -n +2)
+          TITLE=$(grep '^title:' ${{ steps.mdfile.outputs.file }} | sed 's/title:[[:space:]]*//;s/"//g')
+          SUMMARY=$(grep '^summary:' ${{ steps.mdfile.outputs.file }} | sed 's/summary:[[:space:]]*//;s/"//g')
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
 
       - name: Send to Telegram
-        uses: appleboy/telegram-action@master
+        uses: appleboy/telegram-action@v0.1.0
         with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          to: -1003153421262
+          token: 8257053065:AAG9o9k_8bweYxMSTzhotCL1etiWZ9pZVVo
           message: |
             *${{ steps.extract.outputs.title }}*
             _${{ steps.extract.outputs.summary }}_
