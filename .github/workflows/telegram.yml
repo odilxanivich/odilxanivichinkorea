@@ -13,17 +13,32 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Extract commit info
+      - name: Get changed markdown file
         run: |
-          echo "TITLE=${{ github.event.commits[0].message }}" >> $GITHUB_ENV
-          echo "DESC=${{ github.sha }}" >> $GITHUB_ENV
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
+          echo "FILE=$FILE" >> $GITHUB_ENV
+
+      - name: Extract title and description from front-matter
+        run: |
+          TITLE=$(sed -n 's/^title:[[:space:]]*"\(.*\)"/\1/p' "$FILE" | head -n 1)
+          EXCERPT=$(sed -n 's/^excerpt:[[:space:]]*"\(.*\)"/\1/p' "$FILE" | head -n 1)
+          SUMMARY=$(sed -n 's/^summary:[[:space:]]*"\(.*\)"/\1/p' "$FILE" | head -n 1)
+
+          if [ -n "$EXCERPT" ]; then
+            DESC="$EXCERPT"
+          else
+            DESC="$SUMMARY"
+          fi
+
+          echo "TITLE=$TITLE" >> $GITHUB_ENV
+          echo "DESC=$DESC" >> $GITHUB_ENV
 
       - name: Send Telegram message
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE=$(printf "🔥 <b>Yangi post qo‘shildi!</b>\n\n📝 <b>Sarlavha:</b> %s\n💡 <i>Commit ID:</i> %s" "$TITLE" "$DESC")
+          MESSAGE=$(printf "🔥 <b>Yangi post qo‘shildi!</b>\n\n📝 <b>Sarlavha:</b> %s\n💡 <b>Tavsif:</b> %s" "$TITLE" "$DESC")
 
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
