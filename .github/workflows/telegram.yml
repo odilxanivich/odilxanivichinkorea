@@ -12,14 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Find changed Markdown file in /posts
-        run: |
-          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^posts/.*\.md$' | head -n 1)
-          if [ -z "$FILE" ]; then
-            # fallback: just take the most recent md file in /posts
-            FILE=$(find posts -name '*.md' | sort | tail -n 1)
-          fi
-          echo "FILE=$FILE" >> $GITHUB_ENV
+      - name: Get latest pushed Markdown file run: | FILE=$(echo "${{ github.event.head_commit.modified }}" | tr -d '[],"' | tr ' ' '\n' | grep '^posts/.*\.md$' | tail -n 1) if [ -z "$FILE" ]; then echo "No Markdown file detected in head commit." exit 1 fi echo "FILE=$FILE" >> $GITHUB_ENV
 
       - name: Extract title and summary from front matter
         run: |
