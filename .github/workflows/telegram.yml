@@ -17,23 +17,30 @@ jobs:
           FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1 || true)
           echo "FILE=$FILE" >> $GITHUB_ENV
 
-      - name: Extract title and excerpt safely
-        run: |
-          if [ -z "$FILE" ]; then
-            echo "TITLE=Yangi post" >> $GITHUB_ENV
-            echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
-            exit 0
-          fi
+      - name: Extract title and description (robust)
+  run: |
+    if [ -z "$FILE" ]; then
+      echo "TITLE=Yangi post" >> $GITHUB_ENV
+      echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
+      exit 0
+    fi
 
-          TITLE=$(grep '^title:' "$FILE" | head -n 1 | sed 's/^title:[[:space:]]*//; s/^"//; s/"$//')
-          DESC=$(grep '^excerpt:' "$FILE" | head -n 1 | sed 's/^excerpt:[[:space:]]*//; s/^"//; s/"$//')
+    # Extract lines between the first two '---'
+    FRONT=$(awk 'NR>1 && $0=="---"{exit} NR>1{print}' "$FILE")
 
-          if [ -z "$DESC" ]; then
-            DESC=$(grep '^summary:' "$FILE" | head -n 1 | sed 's/^summary:[[:space:]]*//; s/^"//; s/"$//')
-          fi
+    # Extract title, excerpt, summary
+    TITLE=$(echo "$FRONT" | sed -n 's/^[[:space:]]*title:[[:space:]]*"\(.*\)"/\1/p')
+    EXCERPT=$(echo "$FRONT" | sed -n 's/^[[:space:]]*excerpt:[[:space:]]*"\(.*\)"/\1/p')
+    SUMMARY=$(echo "$FRONT" | sed -n 's/^[[:space:]]*summary:[[:space:]]*"\(.*\)"/\1/p')
 
-          echo "TITLE=$TITLE" >> $GITHUB_ENV
-          echo "DESC=$DESC" >> $GITHUB_ENV
+    # Fallbacks
+    [ -z "$TITLE" ] && TITLE="Yangi post"
+    [ -n "$EXCERPT" ] && DESC="$EXCERPT" || DESC="$SUMMARY"
+    [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
+
+    echo "TITLE=$TITLE" >> $GITHUB_ENV
+    echo "DESC=$DESC" >> $GITHUB_ENV
+
 
       - name: Send Telegram message
         env:
