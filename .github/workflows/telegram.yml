@@ -29,8 +29,9 @@ jobs:
       - name: Send to Telegram
         uses: appleboy/telegram-action@v0.1.0
         with:
-          to: -1003153421262
-          token: 8257053065:AAG9o9k_8bweYxMSTzhotCL1etiWZ9pZVVo
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             *${{ steps.extract.outputs.title }}*
             _${{ steps.extract.outputs.summary }}_
+          parse_mode: markdown

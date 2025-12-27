@@ -26,7 +26,7 @@ slug: "student-travel-from-korea-2026"
 status: "published"
 canonical_url: "https://odilxanivichinkorea.com/posts/student-travel-from-korea-2026"
 ---
-New
+New ver
 Talaba bo‘lib Seulda o‘qish — bu faqat dars, imtihon emas. Yaqin mamlakatlar bo‘yicha mini-sayohatlar — hayotni mazmunli qiladi. Bu yerda viza masalalari, eng yaxshi mavsumlar, pro/konlar, real narxlar (hammasi won’da), va talaba byudjetiga mos yo‘l xaritasi bor. Keling, rostini aytamiz: naqd pul cheklangan, vaqt ham. Shuning uchun reja aniq bo‘lsin, xafsalang pir bo‘lmasin.
 
 ---
