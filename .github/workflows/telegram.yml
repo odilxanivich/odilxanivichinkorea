@@ -3,7 +3,6 @@ name: New MD → Telegram
 on:
   push:
     branches: [ main ]
-    paths: [ '**.md' ]
 
 jobs:
   notify:
@@ -11,24 +10,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Find new .md files
+      - name: ALWAYS send test message first
+        run: |
+          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d text="🔥 Workflow triggered! $(date)"
+      
+      - name: Find ALL changed .md files (not just added)
         id: files
         run: |
-          git fetch --depth=2
-          NEW_MD=$(git diff --diff-filter=A --name-only HEAD~1 | grep '\.md$' || true)
-          echo "new_md<<EOF" >> $GITHUB_OUTPUT
-          echo "$NEW_MD" >> $GITHUB_OUTPUT
+          CHANGED_MD=$(git diff --name-only HEAD~1 HEAD | grep '\.md$' || true)
+          echo "changed_md<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_MD" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-          echo "Found: $NEW_MD"
+          echo "Found changed .md files:"
+          echo "$CHANGED_MD"
       
-      - name: Send to Telegram
-        if: steps.files.outputs.new_md != ''
+      - name: Send messages for changed files
+        if: steps.files.outputs.changed_md != ''
         run: |
           while read file; do
-            TITLE=$(sed -n 's/^title: *"\(.*\)"/\1/p' "$file")
-            SUMMARY=$(sed -n 's/^summary: *"\(.*\)"/\1/p' "$file")
-            MSG="🆕 ${TITLE}\n\n${SUMMARY}"
-            curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-              -d text="$MSG"
-          done <<< "${{ steps.files.outputs.new_md }}"
+            if [ -f "$file" ]; then
+              TITLE=$(sed -n 's/^title: *"\(.*\)"/\1/p' "$file" | head -1)
+              SUMMARY=$(sed -n 's/^summary: *"\(.*\)"/\1/p' "$file" | head -1)
+              
+              [ -z "$TITLE" ] && TITLE="New post"
+              [ -z "$SUMMARY" ] && SUMMARY="Check it out!"
+              
+              MSG="🆕 *${TITLE}*\n\n${SUMMARY}"
+              echo "Sending for $file:"
+              echo "$MSG"
+              
+              curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+                -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+                -d parse_mode=Markdown \
+                -d text="$MSG"
+            fi
+          done <<< "${{ steps.files.outputs.changed_md }}"
