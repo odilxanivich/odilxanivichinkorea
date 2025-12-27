@@ -12,24 +12,25 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Find changed Markdown file in /posts
+      - name: Find changed Markdown files in /posts
         run: |
-          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^posts/.*\.md$' | head -n 1)
-          if [ -z "$FILE" ]; then
-            # fallback: just take the most recent md file in /posts
-            FILE=$(find posts -name '*.md' | sort | tail -n 1)
-          fi
-          echo "FILE=$FILE" >> $GITHUB_ENV
+          FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^posts/.*\.md$')
+          echo "FILES=$FILES" >> $GITHUB_ENV
 
-      - name: Extract title and summary from front matter
+      - name: Extract title and summary from first changed file
         run: |
-          TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
-          SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
-          echo "TITLE=$TITLE" >> $GITHUB_ENV
-          echo "DESC=$SUMMARY" >> $GITHUB_ENV
+          for FILE in $FILES; do
+            TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
+            SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
+            echo "FILE=$FILE" >> $GITHUB_ENV
+            echo "TITLE=$TITLE" >> $GITHUB_ENV
+            echo "DESC=$SUMMARY" >> $GITHUB_ENV
+            break   # only take the first changed file
+          done
 
       - name: Debug values
         run: |
+          echo "FILES=${{ env.FILES }}"
           echo "FILE=${{ env.FILE }}"
           echo "TITLE=${{ env.TITLE }}"
           echo "DESC=${{ env.DESC }}"
@@ -39,7 +40,18 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          MESSAGE=$(cat <<EOF
+🚀 *New Post Published!* 🚀
+
+📌 *Title:* _${{ env.TITLE }}_
+
+📝 *Summary:*
+${{ env.DESC }}
+
+[🔗 Read full post](https://yourblog.com/${{ env.FILE }})
+EOF
+)
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=Markdown \
-            -d text="🚀 *New Post Published!* 🚀\n\n📌 *Title:* _${{ env.TITLE }}_\n\n📝 *Summary:*\n${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
+            -d text="$MESSAGE"
