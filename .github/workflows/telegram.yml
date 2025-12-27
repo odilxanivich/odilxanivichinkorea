@@ -1,15 +1,41 @@
-name: Test Telegram Bot
+name: Notify Telegram on Markdown Push
 
 on:
-  workflow_dispatch:   # allows you to run manually from GitHub Actions tab
+  push:
+    paths:
+      - '**/*.md'
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send test message
-        uses: appleboy/telegram-action@v0.1.0
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message: "Hello from GitHub Actions 👋"
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Find changed Markdown file
+        run: |
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
+          echo "FILE=$FILE" >> $GITHUB_ENV
+          if [ -z "$FILE" ]; then
+            echo "TITLE=Default title" >> $GITHUB_ENV
+            echo "DESC=Default description" >> $GITHUB_ENV
+          else
+            echo "TITLE=Markdown file changed" >> $GITHUB_ENV
+            echo "DESC=$FILE" >> $GITHUB_ENV
+          fi
+
+      - name: Debug values
+        run: |
+          echo "FILE=${{ env.FILE }}"
+          echo "TITLE=${{ env.TITLE }}"
+          echo "DESC=${{ env.DESC }}"
+
+      - name: Send Telegram message
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+            -d chat_id="$TELEGRAM_CHAT_ID" \
+            -d parse_mode=HTML \
+            -d text="🔥 Workflow triggered!%0A%0A📝 Title: ${{ env.TITLE }}%0A💡 Description: ${{ env.DESC }}"
