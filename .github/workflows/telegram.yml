@@ -12,33 +12,36 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Find changed Markdown file
-        run: |
-          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
-          echo "FILE=$FILE" >> $GITHUB_ENV
+      - name: Find any Markdown file
+  run: |
+    FILE=$(find . -type f -name '*.md' | head -n 1)
+    echo "FILE=$FILE" >> $GITHUB_ENV
 
-          if [ -z "$FILE" ]; then
-            echo "TITLE=Yangi post" >> $GITHUB_ENV
-            echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
-            exit 0
-          fi
+    if [ -z "$FILE" ]; then
+      echo "TITLE=Yangi post" >> $GITHUB_ENV
+      echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
+      exit 0
+    fi
 
-          # Parse front-matter safely (only the YAML block at the top)
-          FRONT=$(awk 'NR>1 && $0=="---"{exit} NR>1{print}' "$FILE")
-          TITLE=$(echo "$FRONT" | sed -n 's/^[[:space:]]*title:[[:space:]]*"\(.*\)"/\1/p')
-          EXCERPT=$(echo "$FRONT" | sed -n 's/^[[:space:]]*excerpt:[[:space:]]*"\(.*\)"/\1/p')
-          SUMMARY=$(echo "$FRONT" | sed -n 's/^[[:space:]]*summary:[[:space:]]*"\(.*\)"/\1/p')
+    # Parse front-matter safely (only the YAML block at the top)
+    FRONT=$(awk 'NR>1 && $0=="---"{exit} NR>1{print}' "$FILE")
+    echo "FRONT=$FRONT"  # Debug print
 
-          [ -z "$TITLE" ] && TITLE="Yangi post"
-          if [ -n "$EXCERPT" ]; then
-            DESC="$EXCERPT"
-          else
-            DESC="$SUMMARY"
-          fi
-          [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
+    TITLE=$(echo "$FRONT" | sed -n 's/^[[:space:]]*title:[[:space:]]*"\(.*\)"/\1/p')
+    EXCERPT=$(echo "$FRONT" | sed -n 's/^[[:space:]]*excerpt:[[:space:]]*"\(.*\)"/\1/p')
+    SUMMARY=$(echo "$FRONT" | sed -n 's/^[[:space:]]*summary:[[:space:]]*"\(.*\)"/\1/p')
 
-          echo "TITLE=$TITLE" >> $GITHUB_ENV
-          echo "DESC=$DESC" >> $GITHUB_ENV
+    [ -z "$TITLE" ] && TITLE="Yangi post"
+    if [ -n "$EXCERPT" ]; then
+      DESC="$EXCERPT"
+    else
+      DESC="$SUMMARY"
+    fi
+    [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
+
+    echo "TITLE=$TITLE" >> $GITHUB_ENV
+    echo "DESC=$DESC" >> $GITHUB_ENV
+
 
       - name: Debug values
         run: |
