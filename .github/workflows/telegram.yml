@@ -12,12 +12,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Find latest changed Markdown file in /posts
+      - name: Find changed Markdown file in /posts
         run: |
           FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^posts/.*\.md$' | tail -n 1)
           if [ -z "$FILE" ]; then
-            echo "No changed .md file found in this push."
-            exit 1
+            # fallback: just take the most recent md file in /posts
+            FILE=$(find posts -name '*.md' | sort | tail -n 1)
           fi
           echo "FILE=$FILE" >> $GITHUB_ENV
 
@@ -25,8 +25,6 @@ jobs:
         run: |
           TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
           SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
-          [ -z "$TITLE" ] && TITLE="Untitled post"
-          [ -z "$SUMMARY" ] && SUMMARY="No summary provided."
           echo "TITLE=$TITLE" >> $GITHUB_ENV
           echo "DESC=$SUMMARY" >> $GITHUB_ENV
 
@@ -44,4 +42,4 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=Markdown \
-            -d text="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
+            -d text="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}"
