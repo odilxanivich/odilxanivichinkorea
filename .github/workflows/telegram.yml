@@ -12,46 +12,34 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Extract title and description
-        run: |
-          FILE=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep '\.md$' | head -n 1)
-          echo "FILE=$FILE" >> $GITHUB_ENV
+      - name: Install yq
+        run: sudo apt-get update && sudo apt-get install -y yq
 
+      - name: Find changed Markdown file
+        run: |
+          FILE=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep '\.md$' | head -n1)
+          echo "FILE=$FILE" >> $GITHUB_ENV
           if [ -z "$FILE" ]; then
             echo "TITLE=Yangi post" >> $GITHUB_ENV
             echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
             exit 0
           fi
 
-          # Parse front-matter safely
-          FRONT=$(awk 'NR>1 && $0=="---"{exit} NR>1{print}' "$FILE")
-          TITLE=$(echo "$FRONT" | sed -n 's/^[[:space:]]*title:[[:space:]]*"\(.*\)"/\1/p')
-          EXCERPT=$(echo "$FRONT" | sed -n 's/^[[:space:]]*excerpt:[[:space:]]*"\(.*\)"/\1/p')
-          SUMMARY=$(echo "$FRONT" | sed -n 's/^[[:space:]]*summary:[[:space:]]*"\(.*\)"/\1/p')
-
-          [ -z "$TITLE" ] && TITLE="Yangi post"
-          if [ -n "$EXCERPT" ]; then
-            DESC="$EXCERPT"
-          else
-            DESC="$SUMMARY"
-          fi
-          [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
-
+      - name: Parse front-matter with yq
+        run: |
+          TITLE=$(yq e '.title' "$FILE")
+          EXCERPT=$(yq e '.excerpt' "$FILE")
+          SUMMARY=$(yq e '.summary' "$FILE")
+          DESC=${EXCERPT:-$SUMMARY}
+          TITLE=${TITLE:-"Yangi post"}
+          DESC=${DESC:-"Yangi maqola qo‘shildi"}
           echo "TITLE=$TITLE" >> $GITHUB_ENV
           echo "DESC=$DESC" >> $GITHUB_ENV
-
-      - name: Debug values
-        run: |
-          echo "FILE=$FILE"
-          echo "TITLE=$TITLE"
-          echo "DESC=$DESC"
 
       - name: Send Telegram message
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          TITLE: ${{ env.TITLE }}
-          DESC: ${{ env.DESC }}
         run: |
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
