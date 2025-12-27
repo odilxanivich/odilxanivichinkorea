@@ -12,39 +12,28 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Find changed Markdown files in /posts
+      - name: Find changed Markdown file in posts
         run: |
           set -e
           FILES=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep '^posts/.*\.md$' || true)
           echo "FILES=$FILES" >> "$GITHUB_ENV"
 
-      - name: Extract title and summary from first changed file
+      - name: Extract title and summary
         run: |
           set -e
           FILES="${{ env.FILES }}"
           if [ -z "$FILES" ]; then
-            echo "No changed .md files detected under posts/. Exiting."
-            exit 1
+            echo "No changed .md under posts/"
+            exit 0
           fi
-
           FILE=$(echo "$FILES" | head -n 1)
-          echo "FILE=$FILE" >> "$GITHUB_ENV"
-
           TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
           SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
-
           [ -z "$TITLE" ] && TITLE="Untitled post"
           [ -z "$SUMMARY" ] && SUMMARY="No summary provided."
-
+          echo "FILE=$FILE" >> "$GITHUB_ENV"
           echo "TITLE=$TITLE" >> "$GITHUB_ENV"
           echo "DESC=$SUMMARY" >> "$GITHUB_ENV"
-
-      - name: Debug values
-        run: |
-          echo "FILES=${{ env.FILES }}"
-          echo "FILE=${{ env.FILE }}"
-          echo "TITLE=${{ env.TITLE }}"
-          echo "DESC=${{ env.DESC }}"
 
       - name: Send Telegram message
         env:
@@ -52,13 +41,8 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           set -e
-          printf "🚀 *New Post Published!* 🚀\n\n📌 *Title:* _%s_\n\n📝 *Summary:*\n%s\n\n[🔗 Read full post](https://yourblog.com/%s)\n" \
-            "${{ env.TITLE }}" \
-            "${{ env.DESC }}" \
-            "${{ env.FILE }}" \
-            > message.txt
-
+          TEXT="🚀 New Post: ${{ env.TITLE }} — ${{ env.DESC }}"
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=Markdown \
-            --data-urlencode text@"message.txt"
+            --data-urlencode "text=$TEXT"
