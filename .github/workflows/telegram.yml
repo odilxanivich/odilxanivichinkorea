@@ -10,31 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Get changed markdown file
+      - name: Find markdown file
         run: |
-          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1 || true)
           echo "FILE=$FILE" >> $GITHUB_ENV
 
-      - name: Extract title and description from front-matter
-  run: |
-    FRONTMATTER=$(awk 'NR==1{f=1} /^---$/{if(++c==2) exit} f' "$FILE")
+      - name: Extract title and excerpt safely
+        run: |
+          if [ -z "$FILE" ]; then
+            echo "TITLE=Yangi post" >> $GITHUB_ENV
+            echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
+            exit 0
+          fi
 
-    TITLE=$(echo "$FRONTMATTER" | sed -n 's/^title:[[:space:]]*"\(.*\)"/\1/p')
-    EXCERPT=$(echo "$FRONTMATTER" | sed -n 's/^excerpt:[[:space:]]*"\(.*\)"/\1/p')
-    SUMMARY=$(echo "$FRONTMATTER" | sed -n 's/^summary:[[:space:]]*"\(.*\)"/\1/p')
+          TITLE=$(grep '^title:' "$FILE" | head -n 1 | sed 's/^title:[[:space:]]*//; s/^"//; s/"$//')
+          DESC=$(grep '^excerpt:' "$FILE" | head -n 1 | sed 's/^excerpt:[[:space:]]*//; s/^"//; s/"$//')
 
-    if [ -n "$EXCERPT" ]; then
-      DESC="$EXCERPT"
-    else
-      DESC="$SUMMARY"
-    fi
+          if [ -z "$DESC" ]; then
+            DESC=$(grep '^summary:' "$FILE" | head -n 1 | sed 's/^summary:[[:space:]]*//; s/^"//; s/"$//')
+          fi
 
-    echo "TITLE=$TITLE" >> $GITHUB_ENV
-    echo "DESC=$DESC" >> $GITHUB_ENV
-
+          echo "TITLE=$TITLE" >> $GITHUB_ENV
+          echo "DESC=$DESC" >> $GITHUB_ENV
 
       - name: Send Telegram message
         env:
@@ -45,6 +44,5 @@ jobs:
 
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
-            -d parse_mode="HTML" \
+            -d parse_mode=HTML \
             --data-urlencode "text=$MESSAGE"
-            
