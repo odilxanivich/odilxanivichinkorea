@@ -1,0 +1,32 @@
+name: Notify Telegram on Markdown Push
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get changed markdown files
+        id: files
+        run: |
+          echo "FILES=$(git diff --name-only HEAD~1 HEAD | grep '.md' || true)" >> $GITHUB_ENV
+
+      - name: Extract commit info
+        run: |
+          echo "TITLE=$(git log -1 --pretty=%s)" >> $GITHUB_ENV
+          echo "DESC=$(git log -1 --pretty=%b)" >> $GITHUB_ENV
+
+      - name: Send Telegram message
+        run: |
+          for f in $FILES; do
+            curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+              -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+              -d parse_mode=MarkdownV2 \
+              -d text="🔥 *Yangi post qo‘shildi!* 🔥%0A%0A📄 *Fayl:* $f%0A📝 *Sarlavha:* $TITLE%0A💡 _Izoh:_ $DESC%0A%0A👉 Uni hozir ko‘rib chiqing!"
+          done

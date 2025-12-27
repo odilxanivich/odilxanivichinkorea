@@ -1,4 +1,5 @@
 import Layout from "../components/Layout";
+import { groups } from "../data/groups";
 import { useState, useRef, useEffect } from "react";
 import { steps } from "../data/steps";
 import Picker from "react-mobile-picker";
@@ -9,6 +10,8 @@ export default function IKorean() {
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef(null);
   const pickerRef = useRef(null);
+
+  const [currentPage, setCurrentPage] = useState(1); const groupsPerPage = 3; const totalPages = Math.ceil(groups.length / groupsPerPage); const startIndex = (currentPage - 1) * groupsPerPage; const currentGroups = groups.slice(startIndex, startIndex + groupsPerPage);
 
   const stepData = steps.find((s) => s.step === currentStep);
 
@@ -164,6 +167,81 @@ export default function IKorean() {
           Step {currentStep} of 150
         </p>
       </div>
+
+      <section className="mt-20 px-6">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-10">
+          Premium Test Guruhlari
+        </h2>
+
+        {/* BIG CARD GRID */}
+        <div className="grid gap-8 md:grid-cols-3">
+          {currentGroups.map((group) => (
+            <div key={group.id} className="bg-gradient-to-r from-yellow-50 to-red-100 rounded-2xl shadow-xl p-10 flex flex-col items-center hover:scale-105 transition" >
+              <h3 className="text-2xl font-bold text-red-700 mb-4 text-center">
+                {group.title}
+              </h3>
+              <p className="text-gray-700 mb-6 text-center text-lg">
+                Faylni yuklab oling va mustaqil yeching.
+              </p>
+              <a href={group.pdf} download className="px-6 py-3 bg-red-600 text-white text-lg rounded-full shadow hover:bg-red-700 transition" >
+                📄 PDF saqlab olish
+              </a>
+            </div>
+          ))}
+        </div>
+
+        {/* PAGINATION */}
+        <div className="mt-12 flex flex-col items-center space-y-4">
+          {/* Mobile-friendly pagination */}
+          <div className="flex items-center justify-center space-x-4 md:hidden">
+            <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+            >
+              Oldingi
+            </button>
+            <span className="text-gray-700 font-medium">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+            >
+              Keyingi
+            </button>
+          </div>
+
+          {/* Desktop pagination with numbers */}
+          <div className="hidden md:flex justify-center space-x-2">
+            <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+            >
+              Oldingi
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button key={page} onClick={() => setCurrentPage(page)}
+                className={`px-4 py-2 rounded ${
+                  page === currentPage
+                    ? "bg-red-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+            >
+              Keyingi
+            </button>
+          </div>
+        </div>
+      </section>
+      
     </Layout>
   );
 }
