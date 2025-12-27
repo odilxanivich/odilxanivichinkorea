@@ -13,16 +13,24 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Find changed Markdown file
+        id: mdfile
         run: |
           FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
           echo "FILE=$FILE" >> $GITHUB_ENV
-          if [ -z "$FILE" ]; then
-            echo "TITLE=Default title" >> $GITHUB_ENV
-            echo "DESC=Default description" >> $GITHUB_ENV
-          else
-            echo "TITLE=Markdown file changed" >> $GITHUB_ENV
-            echo "DESC=$FILE" >> $GITHUB_ENV
-          fi
+
+      - name: Extract title and summary
+        if: env.FILE != ''
+        run: |
+          TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
+          SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
+          echo "TITLE=$TITLE" >> $GITHUB_ENV
+          echo "DESC=$SUMMARY" >> $GITHUB_ENV
+
+      - name: Fallback defaults
+        if: env.FILE == ''
+        run: |
+          echo "TITLE=Default title" >> $GITHUB_ENV
+          echo "DESC=Default description" >> $GITHUB_ENV
 
       - name: Debug values
         run: |
@@ -37,5 +45,5 @@ jobs:
         run: |
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
-            -d parse_mode=HTML \
-            -d text="🔥 Workflow triggered!%0A%0A📝 Title: ${{ env.TITLE }}%0A💡 Description: ${{ env.DESC }}"
+            -d parse_mode=Markdown \
+            -d text="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}"
