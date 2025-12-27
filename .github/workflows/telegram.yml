@@ -1,4 +1,4 @@
-Notify Telegram on Markdown Push
+name: Notify Telegram on Markdown Push
 
 on:
   push:
