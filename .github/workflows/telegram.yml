@@ -8,48 +8,48 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Find markdown file
+      - name: Find changed markdown files
+        id: files
         run: |
-          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1 || true)
+          FILE=$(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep '\.md$' | head -n 1)
           echo "FILE=$FILE" >> $GITHUB_ENV
 
-      - name: Extract title and description (robust)
-  run: |
-    if [ -z "$FILE" ]; then
-      echo "TITLE=Yangi post" >> $GITHUB_ENV
-      echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
-      exit 0
-    fi
+      - name: Extract title and description
+        run: |
+          if [ -z "$FILE" ]; then
+            echo "TITLE=Yangi post" >> $GITHUB_ENV
+            echo "DESC=Yangi maqola qo‘shildi" >> $GITHUB_ENV
+            exit 0
+          fi
 
-    # Extract lines between the first two '---'
-    FRONT=$(awk 'NR>1 && $0=="---"{exit} NR>1{print}' "$FILE")
+          # Extract front-matter
+          FRONT=$(awk 'NR>1 && $0=="---"{exit} NR>1{print}' "$FILE")
 
-    # Extract title, excerpt, summary
-    TITLE=$(echo "$FRONT" | sed -n 's/^[[:space:]]*title:[[:space:]]*"\(.*\)"/\1/p')
-    EXCERPT=$(echo "$FRONT" | sed -n 's/^[[:space:]]*excerpt:[[:space:]]*"\(.*\)"/\1/p')
-    SUMMARY=$(echo "$FRONT" | sed -n 's/^[[:space:]]*summary:[[:space:]]*"\(.*\)"/\1/p')
+          # Extract title and excerpt/summary
+          TITLE=$(echo "$FRONT" | sed -n 's/^[[:space:]]*title:[[:space:]]*"\(.*\)"/\1/p')
+          EXCERPT=$(echo "$FRONT" | sed -n 's/^[[:space:]]*excerpt:[[:space:]]*"\(.*\)"/\1/p')
+          SUMMARY=$(echo "$FRONT" | sed -n 's/^[[:space:]]*summary:[[:space:]]*"\(.*\)"/\1/p')
 
-    # Fallbacks
-    [ -z "$TITLE" ] && TITLE="Yangi post"
-    [ -n "$EXCERPT" ] && DESC="$EXCERPT" || DESC="$SUMMARY"
-    [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
+          # Fallbacks
+          [ -z "$TITLE" ] && TITLE="Yangi post"
+          [ -n "$EXCERPT" ] && DESC="$EXCERPT" || DESC="$SUMMARY"
+          [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
 
-    echo "TITLE=$TITLE" >> $GITHUB_ENV
-    echo "DESC=$DESC" >> $GITHUB_ENV
-
+          echo "TITLE=$TITLE" >> $GITHUB_ENV
+          echo "DESC=$DESC" >> $GITHUB_ENV
 
       - name: Send Telegram message
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TITLE: ${{ env.TITLE }}
+          DESC: ${{ env.DESC }}
         run: |
-          MESSAGE=$(printf "🔥 <b>Yangi post qo‘shildi!</b>\n\n📝 <b>Sarlavha:</b> %s\n💡 <b>Tavsif:</b> %s" "$TITLE" "$DESC")
-
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=HTML \
-            --data-urlencode "text=$MESSAGE"
+            -d text="🔥 Yangi post qo‘shildi!%0A%0A📝 Sarlavha: $TITLE%0A💡 Tavsif: $DESC"
