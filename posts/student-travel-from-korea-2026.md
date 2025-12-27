@@ -234,7 +234,7 @@ Talaba bo‘lib Seulda o‘qish — bu faqat dars, imtihon emas. Yaqin mamlakatl
 
 ---
 
-## Viza haqida muhim eslatma (talaba konteksti)
+## Viza haqida muhim eslatma
 
 - **ARC viza emas:** **yashash kartasi (ARC)** — Koreya ichida huquq, lekin boshqa davlatga kirish uchun **pasport qoidasi** amal qiladi.  
 - **Visa-free/e-visa/VOA:** ko‘p yo‘nalishlarda mavjud, lekin **mamlakating pasporti**ga bog‘liq.  
