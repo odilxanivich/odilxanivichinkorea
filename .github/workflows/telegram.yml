@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Extract title and description from changed file
+      - name: Extract title and description
         run: |
           # Find the first changed markdown file
           FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
@@ -24,14 +24,19 @@ jobs:
             exit 0
           fi
 
-          # Parse front-matter lines
-          TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*"\(.*\)"/\1/')
-          EXCERPT=$(grep '^excerpt:' "$FILE" | sed 's/excerpt:[[:space:]]*"\(.*\)"/\1/')
-          SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*"\(.*\)"/\1/')
+          # Parse front-matter keys (handles quoted or unquoted values)
+          TITLE=$(grep '^title:' "$FILE" | sed -E 's/title:[[:space:]]*"?([^"]*)"?/\1/')
+          EXCERPT=$(grep '^excerpt:' "$FILE" | sed -E 's/excerpt:[[:space:]]*"?([^"]*)"?/\1/')
+          SUMMARY=$(grep '^summary:' "$FILE" | sed -E 's/summary:[[:space:]]*"?([^"]*)"?/\1/')
 
-          # Fallbacks
+          # Prefer excerpt, then summary
+          if [ -n "$EXCERPT" ]; then
+            DESC="$EXCERPT"
+          else
+            DESC="$SUMMARY"
+          fi
+
           [ -z "$TITLE" ] && TITLE="Yangi post"
-          [ -n "$EXCERPT" ] && DESC="$EXCERPT" || DESC="$SUMMARY"
           [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
 
           echo "TITLE=$TITLE" >> $GITHUB_ENV
