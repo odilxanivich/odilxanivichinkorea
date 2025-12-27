@@ -12,9 +12,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Extract title and description
+      - name: Find changed Markdown file
         run: |
-          FILE=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep '\.md$' | head -n 1)
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
           echo "FILE=$FILE" >> $GITHUB_ENV
 
           if [ -z "$FILE" ]; then
@@ -23,7 +23,7 @@ jobs:
             exit 0
           fi
 
-          # Parse front-matter safely
+          # Parse front-matter safely (only the YAML block at the top)
           FRONT=$(awk 'NR>1 && $0=="---"{exit} NR>1{print}' "$FILE")
           TITLE=$(echo "$FRONT" | sed -n 's/^[[:space:]]*title:[[:space:]]*"\(.*\)"/\1/p')
           EXCERPT=$(echo "$FRONT" | sed -n 's/^[[:space:]]*excerpt:[[:space:]]*"\(.*\)"/\1/p')
@@ -42,9 +42,9 @@ jobs:
 
       - name: Debug values
         run: |
-          echo "FILE=$FILE"
-          echo "TITLE=$TITLE"
-          echo "DESC=$DESC"
+          echo "FILE=${{ env.FILE }}"
+          echo "TITLE=${{ env.TITLE }}"
+          echo "DESC=${{ env.DESC }}"
 
       - name: Send Telegram message
         env:
