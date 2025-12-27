@@ -12,7 +12,15 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Get latest pushed Markdown file run: | FILE=$(echo "${{ github.event.head_commit.modified }}" | tr -d '[],"' | tr ' ' '\n' | grep '^posts/.*\.md$' | tail -n 1) if [ -z "$FILE" ]; then echo "No Markdown file detected in head commit." exit 1 fi echo "FILE=$FILE" >> $GITHUB_ENV
+      # 👇 Replace your old "Find changed Markdown file in /posts" step
+      - name: Get latest pushed Markdown file
+        run: |
+          FILE=$(echo "${{ github.event.head_commit.modified }}" | tr -d '[],"' | tr ' ' '\n' | grep '^posts/.*\.md$' | tail -n 1)
+          if [ -z "$FILE" ]; then
+            echo "No Markdown file detected in head commit."
+            exit 1
+          fi
+          echo "FILE=$FILE" >> $GITHUB_ENV
 
       - name: Extract title and summary from front matter
         run: |
@@ -35,4 +43,4 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=Markdown \
-            -d text="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}"
+            -d text="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
