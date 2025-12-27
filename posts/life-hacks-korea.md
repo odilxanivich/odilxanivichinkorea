@@ -18,7 +18,7 @@ slug: "life-hacks-korea"
 status: "published"
 canonical_url: "https://odilxanivichinkorea.com/posts/life-hacks-korea"
 ---
-Do‘stim, bu yozuv oddiy blog emas. Bu — Koreyada yashashni osonlashtiradigan, ba’zan kuldiradigan, ba’zan o‘ylantiradigan, ba’zan esa qorong‘i haqiqatlarni ochib beradigan cheat codes.Men senga Koreyada hayotning barcha darajalarini ochib beraman: oddiy kundalikdan tortib, jamiyatning qorong‘i tomonlari va professional darajaga chiqishgacha. Bu yozuv uzun, lekin har bir qismida hayotiy tajriba bor.
+Do‘stim, Koreyada yashashni osonlashtiradigan, ba’zan kuldiradigan, ba’zan o‘ylantiradigan, ba’zan esa qorong‘i haqiqatlarni ochib beradigan cheat codes.Men senga Koreyada hayotning barcha darajalarini ochib beraman: oddiy kundalikdan tortib, jamiyatning qorong‘i tomonlari va professional darajaga chiqishgacha. Bu yozuv uzun, lekin har bir qismida hayotiy tajriba bor.
 
 ---
 ### Transport
