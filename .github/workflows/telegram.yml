@@ -1,57 +1,16 @@
-name: Send new post summary to Telegram
+name: Telegram Test (ANY PUSH)
 
 on:
   push:
     branches:
       - main
-    paths:
-      - "**/*.md"
 
 jobs:
-  notify:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Find newly added markdown files
+      - name: Send test message
         run: |
-          git fetch --depth=2 origin ${{ github.ref }}
-          git diff --diff-filter=A --name-only HEAD^ HEAD | grep ".md$" > new_files.txt || true
-          echo "New markdown files (if any):"
-          cat new_files.txt || true
-
-      - name: Send Telegram messages for each new file
-        run: |
-          if [ ! -s new_files.txt ]; then
-            echo "No new markdown files in this push."
-            exit 0
-          fi
-
-          while read file; do
-            if [ -f "$file" ]; then
-              echo "Processing $file"
-
-              # Extract title and summary from front matter
-              TITLE=$(grep '^title:' "$file" | sed 's/title:[[:space:]]*"\(.*\)"/\1/')
-              SUMMARY=$(grep '^summary:' "$file" | sed 's/summary:[[:space:]]*"\(.*\)"/\1/')
-
-              # Fallbacks if not found
-              if [ -z "$TITLE" ]; then
-                TITLE="Yangi post"
-              fi
-              if [ -z "$SUMMARY" ]; then
-                SUMMARY="Yangi maqola qo'shildi."
-              fi
-
-              MESSAGE="Yangi post: ${TITLE}\n\n${SUMMARY}"
-
-              echo "Sending message:"
-              echo "$MESSAGE"
-
-              curl -v -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-                -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-                -d text="$MESSAGE"
-            fi
-          done < new_files.txt
+          curl -v -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d text="✅ GitHub Actions WORKS! Push at $(date)"
