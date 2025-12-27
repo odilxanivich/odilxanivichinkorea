@@ -1,49 +1,12 @@
-name: New MD → Telegram
-
-on:
-  push:
-    branches: [ main ]
-
+name: TEST SECRETS ONLY
+on: [push]
 jobs:
-  notify:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: ALWAYS send test message first
-        run: |
+      - run: |
+          echo "TOKEN starts with: ${{ secrets.TELEGRAM_BOT_TOKEN != '' && 'OK' || 'MISSING' }}"
+          echo "CHATID starts with: ${{ secrets.TELEGRAM_CHAT_ID != '' && 'OK' || 'MISSING' }}"
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d text="🔥 Workflow triggered! $(date)"
-      
-      - name: Find ALL changed .md files (not just added)
-        id: files
-        run: |
-          CHANGED_MD=$(git diff --name-only HEAD~1 HEAD | grep '\.md$' || true)
-          echo "changed_md<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGED_MD" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          echo "Found changed .md files:"
-          echo "$CHANGED_MD"
-      
-      - name: Send messages for changed files
-        if: steps.files.outputs.changed_md != ''
-        run: |
-          while read file; do
-            if [ -f "$file" ]; then
-              TITLE=$(sed -n 's/^title: *"\(.*\)"/\1/p' "$file" | head -1)
-              SUMMARY=$(sed -n 's/^summary: *"\(.*\)"/\1/p' "$file" | head -1)
-              
-              [ -z "$TITLE" ] && TITLE="New post"
-              [ -z "$SUMMARY" ] && SUMMARY="Check it out!"
-              
-              MSG="🆕 *${TITLE}*\n\n${SUMMARY}"
-              echo "Sending for $file:"
-              echo "$MSG"
-              
-              curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-                -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-                -d parse_mode=Markdown \
-                -d text="$MSG"
-            fi
-          done <<< "${{ steps.files.outputs.changed_md }}"
+            -d text="🧪 SECRETS TEST $(date)"
