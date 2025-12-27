@@ -14,8 +14,9 @@ jobs:
 
       - name: Install yq
         run: |
-          sudo apt-get update
-          sudo apt-get install -y yq
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+          yq --version
 
       - name: Find changed Markdown file
         run: |
@@ -32,11 +33,24 @@ jobs:
           TITLE=$(yq e '.title' "$FILE")
           EXCERPT=$(yq e '.excerpt' "$FILE")
           SUMMARY=$(yq e '.summary' "$FILE")
-          DESC=${EXCERPT:-$SUMMARY}
-          TITLE=${TITLE:-"Yangi post"}
-          DESC=${DESC:-"Yangi maqola qo‘shildi"}
+
+          if [ -n "$EXCERPT" ]; then
+            DESC="$EXCERPT"
+          else
+            DESC="$SUMMARY"
+          fi
+
+          [ -z "$TITLE" ] && TITLE="Yangi post"
+          [ -z "$DESC" ] && DESC="Yangi maqola qo‘shildi"
+
           echo "TITLE=$TITLE" >> $GITHUB_ENV
           echo "DESC=$DESC" >> $GITHUB_ENV
+
+      - name: Debug values
+        run: |
+          echo "FILE=${{ env.FILE }}"
+          echo "TITLE=${{ env.TITLE }}"
+          echo "DESC=${{ env.DESC }}"
 
       - name: Send Telegram message
         env:
@@ -46,4 +60,4 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=HTML \
-            -d text="🔥 Yangi post qo‘shildi!%0A%0A📝 Sarlavha: $TITLE%0A💡 Tavsif: $DESC"
+            -d text="🔥 Yangi post qo‘shildi!%0A%0A📝 Sarlavha: ${{ env.TITLE }}%0A💡 Tavsif: ${{ env.DESC }}"
