@@ -21,22 +21,18 @@ jobs:
       - name: Extract title and summary from first changed file
         run: |
           set -e
-          # Use the env exported in the previous step
           FILES="${{ env.FILES }}"
           if [ -z "$FILES" ]; then
             echo "No changed .md files detected under posts/. Exiting."
             exit 1
           fi
 
-          # Take the first file from the list
           FILE=$(echo "$FILES" | head -n 1)
           echo "FILE=$FILE" >> "$GITHUB_ENV"
 
-          # Extract front matter fields
           TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
           SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
 
-          # Fallbacks if fields are missing
           [ -z "$TITLE" ] && TITLE="Untitled post"
           [ -z "$SUMMARY" ] && SUMMARY="No summary provided."
 
@@ -56,18 +52,13 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           set -e
-          MESSAGE=$(cat <<'EOF'
-🚀 *New Post Published!* 🚀
+          printf "🚀 *New Post Published!* 🚀\n\n📌 *Title:* _%s_\n\n📝 *Summary:*\n%s\n\n[🔗 Read full post](https://yourblog.com/%s)\n" \
+            "${{ env.TITLE }}" \
+            "${{ env.DESC }}" \
+            "${{ env.FILE }}" \
+            > message.txt
 
-📌 *Title:* _${{ env.TITLE }}_
-
-📝 *Summary:*
-${{ env.DESC }}
-
-[🔗 Read full post](https://yourblog.com/${{ env.FILE }})
-EOF
-)
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=Markdown \
-            --data-urlencode "text=$MESSAGE"
+            --data-urlencode text@"message.txt"
