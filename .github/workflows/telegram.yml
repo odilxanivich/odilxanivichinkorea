@@ -27,6 +27,6 @@ jobs:
           for f in $FILES; do
             curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
               -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-              -d parse_mode=MarkdownV2 \
-              -d text="🔥 *Yangi post qo‘shildi!* 🔥%0A%0A📄 *Fayl:* $f%0A📝 *Sarlavha:* $TITLE%0A💡 _Izoh:_ $DESC%0A%0A👉 Uni hozir ko‘rib chiqing!"
+              -d parse_mode=HTML \
+              -d text="🔥 <b>Yangi post qo‘shildi!</b> 🔥<br><br>📄 <b>Fayl:</b> $f<br>📝 <b>Sarlavha:</b> $TITLE<br>💡 <i>Izoh:</i> $DESC<br><br>👉 <a href='https://odilxanivichinkorea.com/posts/$f'>Postni ko‘rish</a>"
           done
