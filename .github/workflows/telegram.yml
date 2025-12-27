@@ -3,7 +3,7 @@ name: Notify Telegram on Markdown Push
 on:
   push:
     paths:
-      - '**/*.md'
+      - 'posts/**/*.md'
 
 jobs:
   notify:
@@ -12,25 +12,21 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Find changed Markdown file
-        id: mdfile
+      - name: Find changed Markdown file in /posts
         run: |
-          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.md$' | head -n 1)
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^posts/.*\.md$' | head -n 1)
+          if [ -z "$FILE" ]; then
+            # fallback: just take the most recent md file in /posts
+            FILE=$(find posts -name '*.md' | sort | tail -n 1)
+          fi
           echo "FILE=$FILE" >> $GITHUB_ENV
 
-      - name: Extract title and summary
-        if: env.FILE != ''
+      - name: Extract title and summary from front matter
         run: |
           TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
           SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
           echo "TITLE=$TITLE" >> $GITHUB_ENV
           echo "DESC=$SUMMARY" >> $GITHUB_ENV
-
-      - name: Fallback defaults
-        if: env.FILE == ''
-        run: |
-          echo "TITLE=Default title" >> $GITHUB_ENV
-          echo "DESC=Default description" >> $GITHUB_ENV
 
       - name: Debug values
         run: |
