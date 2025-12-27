@@ -41,5 +41,5 @@ jobs:
         run: |
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
-            -d parse_mode=MarkdownV2 \
-            -d text="🚀 *New Post Published!* 🚀\n\n📌 *Title:* _${{ env.TITLE }}_\n\n📝 *Summary:* \n${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
+            -d parse_mode=Markdown \
+            -d text="🚀 *New Post Published!* 🚀\n\n📌 *Title:* _${{ env.TITLE }}_\n\n📝 *Summary:*\n${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
