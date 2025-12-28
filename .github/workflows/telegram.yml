@@ -12,35 +12,39 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 👇 Replace your old "Find changed Markdown file in /posts" step
-      - name: Get latest pushed Markdown file
+      - name: Get latest pushed Markdown file from head commit
         run: |
-          FILE=$(echo "${{ github.event.head_commit.modified }}" | tr -d '[],"' | tr ' ' '\n' | grep '^posts/.*\.md$' | tail -n 1)
-          if [ -z "$FILE" ]; then
-            echo "No Markdown file detected in head commit."
+          set -e
+          FILES=$(git diff-tree --no-commit-id --name-only -r "${{ github.sha }}" | grep '^posts/.*\.md$' || true)
+          if [ -z "$FILES" ]; then
+            echo "No Markdown files changed in head commit."
             exit 1
           fi
-          echo "FILE=$FILE" >> $GITHUB_ENV
+          FILE=$(echo "$FILES" | tail -n 1)
+          echo "FILES=$FILES"
+          echo "Chosen FILE=$FILE"
+          echo "FILE=$FILE" >> "$GITHUB_ENV"
 
       - name: Extract title and summary from front matter
         run: |
+          set -e
+          FILE="${{ env.FILE }}"
           TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
           SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
-          echo "TITLE=$TITLE" >> $GITHUB_ENV
-          echo "DESC=$SUMMARY" >> $GITHUB_ENV
-
-      - name: Debug values
-        run: |
-          echo "FILE=${{ env.FILE }}"
-          echo "TITLE=${{ env.TITLE }}"
-          echo "DESC=${{ env.DESC }}"
+          [ -z "$TITLE" ] && TITLE="Untitled post"
+          [ -z "$SUMMARY" ] && SUMMARY="No summary provided."
+          echo "TITLE=$TITLE" >> "$GITHUB_ENV"
+          echo "DESC=$SUMMARY" >> "$GITHUB_ENV"
+          echo "Debug -> FILE=$FILE, TITLE=$TITLE, DESC=$SUMMARY"
 
       - name: Send Telegram message
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          set -e
+          TEXT="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=Markdown \
-            -d text="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
+            --data-urlencode "text=$TEXT"
