@@ -12,21 +12,22 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 👇 Replace your old "Find changed Markdown file in /posts" step with this
-      - name: Get latest pushed Markdown file
+      # Find the Markdown file(s) changed in this push
+      - name: Find changed Markdown file in /posts
         run: |
-          FILES=$(git diff-tree --no-commit-id --name-only -r "${{ github.sha }}" | grep '^posts/.*\.md$' || true)
-          if [ -z "$FILES" ]; then
-            echo "No Markdown file detected in head commit."
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^posts/.*\.md$' | tail -n 1)
+          if [ -z "$FILE" ]; then
+            echo "No Markdown file detected in this push."
             exit 1
           fi
-          FILE=$(echo "$FILES" | tail -n 1)
           echo "FILE=$FILE" >> $GITHUB_ENV
 
       - name: Extract title and summary from front matter
         run: |
-          TITLE=$(grep '^title:' "$FILE" | sed 's/title:[[:space:]]*//;s/"//g')
-          SUMMARY=$(grep '^summary:' "$FILE" | sed 's/summary:[[:space:]]*//;s/"//g')
+          TITLE=$(grep '^title:' "${{ env.FILE }}" | sed 's/title:[[:space:]]*//;s/"//g')
+          SUMMARY=$(grep '^summary:' "${{ env.FILE }}" | sed 's/summary:[[:space:]]*//;s/"//g')
+          [ -z "$TITLE" ] && TITLE="Untitled post"
+          [ -z "$SUMMARY" ] && SUMMARY="No summary provided."
           echo "TITLE=$TITLE" >> $GITHUB_ENV
           echo "DESC=$SUMMARY" >> $GITHUB_ENV
 
@@ -41,7 +42,8 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          TEXT="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$TELEGRAM_CHAT_ID" \
             -d parse_mode=Markdown \
-            -d text="🔥 Workflow triggered!\n\n📝 Title: ${{ env.TITLE }}\n💡 Summary: ${{ env.DESC }}\n\n[🔗 Read full post](https://yourblog.com/${{ env.FILE }})"
+            --data-urlencode "text=$TEXT"
